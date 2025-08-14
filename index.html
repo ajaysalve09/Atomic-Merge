@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atomic Merge</title>
+  <!-- Styles -->
+  <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/css/lightgallery-bundle.min.css"
+/>
+</head>
+
+
+<body>
+   <!-- Unique Home Loader -->
+<div id="homeLoaderWrapper" style="display: none;">
+  <div id="homeLoader">
+    <div class="home-loader-content">
+      <img src="media/lessonimg.jpg" alt="Atomic Merge Logo" />
+      <p class="home-loading-text">Loading...<br> Please wait...</p>
+      <div class="home-loading-spinner"></div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- 🌟 Intro Overlay -->
+  <div id="introOverlay" class="active">
+    <div class="intro-box">
+<button id="introStartBtn" class="start-game-btn">
+  <i class="far fa-play-circle play-icon1" style="margin-right: 0.4em;"></i>
+ Let's Play
+</button>
+
+
+      <!-- ✅ Progress Popup Modal (inside #introOverlay) -->
+<div id="progressPopup" style="display: none;" class="progress-popup">
+  <div class="progress-box">
+  <div id="atomContainer" style="width: 100%; height: 14em; margin-bottom: 2em;"></div>
+    <p class="progress-label">Loading...</p>
+    <div class="progress-container">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <p id="progressText" class="progress-percent">0%</p>
+  </div>
+</div>
+
+
+  <div id="introSection">
+    <button id="introText">
+      <p>High Score: <span id="highScoreIntro"></span></p>
+    </button>
+
+
+<!-- How to Play Button -->
+<button id="howToPlayBtn" class="how-to-play-btn" ><i class="fas fa-cog fa-2x"></i></button>
+<div id="howToPlayModal" class="how-to-play-modal">
+  <div class="modal-content1">
+    <button class="close-btn"><i class="fas fa-times"></i></button>
+    <h2>How to Play</h2>
+    <div class="slide-container">
+      <div class="slide-track" id="slideTrack">
+        <div class="slide">
+          <p>1: Swipe 'Na' towards 'O' horizontally:</p>
+          <img src="media/play1.png" alt="Step 1" />
+        </div>
+        <div class="slide">
+          <p>2: It creates 'Na₂O'.<br>You can see explanation in info box:</p>
+          <img src="media/play5.png" alt="Step 2" />
+        </div>
+        <div class="slide">
+          <p>3: Swipe 'N' towards 'O' vertically:</p>
+          <img src="media/play2.png" alt="Step 3" />
+        </div>
+        <div class="slide">
+          <p>4: It creates 'NO'.<br>You can see explanation in info box:</p>
+          <img src="media/play3.png" alt="Step 4" />
+        </div>
+        <div class="slide">
+          <p>5: Now click on 'Merged molecules' to see all merged molecules:</p>
+          <img src="media/play4.png" alt="Step 5" />
+        </div>
+      </div>
+      <div id="prevBtn" class="arrow-btn prev-arrow">&#10094;</div>
+      <div id="nextBtn" class="arrow-btn next-arrow">&#10095;</div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+  </div>
+</div>
+
+
+<!-- Splash -->
+<div id="splashScreen"></div>
+
+<div id="loadingPage" style="display: none;">
+  <div id="loader">
+    <div class="loader-content">
+      <img src="media/lessonimg.jpg" alt="Atomic Merge Logo" />
+      <p class="loading-text">Loading...<br> Please wait...</p>
+      <div class="loading-spinner"></div>
+    </div>
+  </div>
+</div>
+
+
+  <!--🧪 Game UI-->
+  <div id="headerBar">
+  <h1 id="gameTitle">
+    <img src="media/logo.png" alt="Atomic Icon" class="atom-icon" />
+    Atomic Merge
+  </h1>
+  <div id="buttonGroup">
+    <button id="refreshBtn" title="Refresh"><i class="fas fa-sync-alt fa-2x"></i></button>
+    <button id="learnBtn" class="learn-button"><i class="fas fa-bars fa-2x"></i></button>
+  </div>
+</div>
+
+
+  <div class="lesson-box" id="lessonBox">
+    <div class="lesson-box-header">
+      <h2>Molecules Info :</h2>
+      <div id="score">Score: 0</div>
+      <div id="highScoreBox">Highest: <span id="highScoreGame">0</span></div>
+    </div>
+    <p id="lessonText">Merge atoms to learn about molecules!</p>
+  </div>
+  
+
+  <!-- <div id="movesDisplay">Moves Left: 10</div> -->
+
+
+  <div id="gameContainer" class="game-grid"></div>
+<div id="gameMessage">Let's Merge!</div>
+  <div id="popupPanel">
+    <div id="popupHeader">
+     <span><i id="popupArrowIcon" class="fas fa-chevron-up" style="margin-right: 5px;"></i> Merged molecules</span>
+      <button id="restartBtn" class="styled-restart">
+        <i class="fas fa-redo"></i> Restart</button>
+    </div>
+    <div id="popupList"></div>
+  </div>
+
+
+  <div id="feedbackModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle">
+    <div class="modal-content">
+      <h2 id="feedbackTitle">Give a Feedback!</h2>
+      <textarea id="feedbackInput" placeholder="What do you think about the game?"></textarea>
+      <p id="feedbackError" style="color: red; display: none; margin-top: 5px;">Please write something to submit</p>
+      <div class="modal-buttons">
+        <button id="submitFeedback" class="btn yes"><i class="far fa-paper-plane"></i> Submit</button>
+        <button id="cancelFeedback" class="btn no"><i class="far fa-times-circle"></i> Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="thankYouPopup" class="thank-you-popup">
+    <div class="thank-you-box">
+      <i class="fas fa-heart-circle-check"></i>
+      <h3>Thank you!</h3>
+      <p>We appreciate your feedback 💬</p>
+    </div>
+  </div>
+
+
+  <div id="blurOverlay"></div>
+  <div id="learnPage" class="learn-page">
+    <div class="learn-header">
+      <div id="backToGameBtn"><i class="fas fa-arrow-left"></i></div>
+      <h2 style="color: #3366cc; font-size: 24px;">Lessons :</h2>
+    </div>
+
+
+    <div id="headerBar">
+      <div id="buttonGroup">
+        <button id="homeBtn" title="Home"><i class="fas fa-home fa-2x"></i> </button>
+        <button id="openGalleryBtn" title="View Gallery"><i class="fas fa-images fa-2x"></i></button>
+        <button id="feedbackBtn" title="Feedback"><i class="far fa-comment-dots fa-2x"></i> </button>
+        <button id="shareBtn" title="Share"><i class="fas fa-share-alt fa-2x"></i> </button>
+    </div>
+    </div>
+
+
+    <div class="search-box open">
+  <input type="text" id="searchInput" placeholder="Search anything..." />
+  <div class="search-btn">
+     <i class="fas fa-search icon"></i>
+  </div>
+</div>
+
+
+    <div id="moleculeLessons" class="lessons-container"></div>
+    <div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmText">
+      <div class="modal-content">
+        <p id="confirmText">Are you sure?</p>
+        <div class="modal-buttons">
+          <button id="confirmYes" class="btn yes"><i class="fas fa-check-circle"></i> Yes, do it</button>
+          <button id="confirmNo" class="btn no"><i class="fas fa-times-circle"></i> Cancel</button>
+        </div>
+      </div>
+    </div>
+
+
+      <!-- Hidden Gallery Section -->
+<div id="lightGallery" style="display: none;">
+  <a href="media/structure.jpeg">
+    <img src="media/structure.jpeg" alt="" />
+</a>
+  <a href="media/astructure.jpeg">
+    <img src="media/astructure.jpeg" alt="" />
+  </a>
+  <a href="media/ptable.jpeg">
+    <img src="media/ptable.jpeg" alt="" />
+  </a>
+  <a href="media/list.jpeg">
+    <img src="media/list.jpeg" alt="" />
+  </a>
+</div>
+
+
+  <!-- ✅ Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.157.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/lightgallery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/plugins/zoom/lg-zoom.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/plugins/thumbnail/lg-thumbnail.min.js"></script>
+
+  <script src="game.js"></script>
+  <script src="js files/search.js"></script>
+  <script src="js files/content.js"></script>
+  <script src="js files/color.js"></script>
+  <script src="js files/board.js"></script>
+  <script src="js files/helping.js"></script>
+  <script src="js files/loaders.js"></script>
+  <script src="js files/atom.js"></script>
+  <script src="js files/howto.js"></script>
+  <script src="js files/gallary.js"></script>
+
+</body>
+</html>
