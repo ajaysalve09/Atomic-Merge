@@ -5,8 +5,6 @@
   box-sizing: border-box;
 }
 
-/* Responsive CSS - add at the end of style.css */
-
 /* For tablets */
 @media (max-width: 768px) {
   .navbar {
