@@ -25,8 +25,6 @@ window.addEventListener("load", () => {
 
     setTimeout(() => {
       loader.style.display = "none";
-      mainGame.style.display = "block";
-      mainGame.style.animation = "fadeInScale 0.2s ease forwards";
     }, 200);
   }, 10000);
 });
