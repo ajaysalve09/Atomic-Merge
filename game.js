@@ -577,26 +577,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 }
 
-   if (homeBtn) {
+if (homeBtn) {
   homeBtn.addEventListener("delayed-click", () => {
-    showConfirmation("<h2>Go Home?</h2><p><strong>You will lose all progress</strong></p>", () => {
+    // Push state so back button can close the confirmation modal
+    history.pushState({ page: "homeConfirm" }, "");
 
-      // ✅ Show the Home Loader
+    showConfirmation("<h2>Go Home?</h2><p><strong>You will lose all progress</strong></p>", () => {
       const homeLoaderWrapper = document.getElementById("homeLoaderWrapper");
       const homeLoader = document.getElementById("homeLoader");
 
       homeLoaderWrapper.style.display = "block";
       homeLoader.style.animation = "fadeInScale 0.1s ease forwards";
 
-      // ⏳ Delay before showing intro
       setTimeout(() => {
-        // ✅ Hide the loader
         homeLoader.style.animation = "fadeOutScale 0.1s ease forwards";
 
         setTimeout(() => {
           homeLoaderWrapper.style.display = "none";
           closeLearnPage();
-          // ✅ Your original code starts here
+
           introOverlay.classList.add("active");
           introOverlay.style.display = "flex";
           gameWrapper.style.display = "none";
@@ -610,28 +609,145 @@ document.addEventListener("DOMContentLoaded", () => {
           document.querySelectorAll(".dropdown-item").forEach(i => i.classList.remove("open"));
           document.querySelectorAll(".dropdown-arrow").forEach(a => a.textContent = "▶");
 
-        }, 00); // after fade out
-      }, 4000); // loader duration
-
+          // Clear history state after action
+          history.replaceState(null, "");
+        }, 0);
+      }, 4000);
     });
   });
 }
 
+// In your popstate handler:
+window.addEventListener("popstate", (event) => {
+  if (event.state?.page === "homeConfirm") {
+    showConfirmation("<h2>Go Home?</h2><p><strong>You will lose all progress</strong></p>", () => {
+      // Run the same home navigation logic as above
+      homeBtn.click(); // or extract it to a function
+    });
+  }
+});
 
-
-  // ==== RESTART BUTTON ====
-  restartBtn.addEventListener("delayed-click", () => {
-    showConfirmation("<h2>Restart?</h2><p><strong>The game will start again</strong></p>", initGame);
-
-  });
 
 
 
   // ==== REFRESH BUTTON ====
-  refreshBtn.addEventListener("delayed-click", () => {
-    showConfirmation("<h2>Refresh?</h2><p><strong>You will lose all merges</strong></p>", initGame);
+refreshBtn.addEventListener("delayed-click", () => {
+  // Push a state so back button can close this modal
+  history.pushState({ page: "refreshConfirm" }, "");
+  showConfirmation(
+    "<h2>Refresh?</h2><p><strong>You will lose all merges</strong></p>",
+    () => {
+      initGame();
+      history.replaceState(null, ""); // clear modal state after refresh
+    }
+  );
+});
 
-  });
+// ==== RESTART BUTTON ====
+restartBtn.addEventListener("delayed-click", () => {
+  history.pushState({ page: "restartConfirm" }, "");
+  showConfirmation(
+    "<h2>Restart?</h2><p><strong>The game will start again</strong></p>",
+    () => {
+      initGame();
+      history.replaceState(null, ""); // clear modal state after restart
+    }
+  );
+});
+
+// Close confirmation modal helper
+function closeConfirmation() {
+  const confirmModal = document.getElementById("confirmModal");
+  if (confirmModal) {
+    confirmModal.style.display = "none";
+  }
+}
+
+// ==== BACK/FORWARD NAVIGATION ====
+window.addEventListener("popstate", (event) => {
+  if (event.state?.page === "feedback") {
+    feedbackModal.style.display = "flex";
+    feedbackError.style.display = "none";
+    learnPage && (learnPage.style.display = "none");
+  } 
+  else if (event.state?.page === "refreshConfirm") {
+    showConfirmation(
+      "<h2>Refresh?</h2><p><strong>You will lose all merges</strong></p>",
+      () => {
+        initGame();
+        history.replaceState(null, "");
+      }
+    );
+  } 
+  else if (event.state?.page === "restartConfirm") {
+    showConfirmation(
+      "<h2>Restart?</h2><p><strong>The game will start again</strong></p>",
+      () => {
+        initGame();
+        history.replaceState(null, "");
+      }
+    );
+  }
+  else {
+    closeFeedback();
+    closeConfirmation();
+  }
+});
+
+
+
+
+// ==== FEEDBACK ====
+feedbackBtn.addEventListener("delayed-click", () => {
+  learnPage && (learnPage.style.display = "none");
+  feedbackModal.style.display = "flex";
+  feedbackError.style.display = "none";
+
+  // Push state for back button support
+  history.pushState({ page: "feedback" }, "");
+});
+
+cancelFeedback.addEventListener("delayed-click", () => {
+  closeFeedback();
+  history.back();
+});
+
+submitFeedback.addEventListener("delayed-click", () => {
+  const feedback = feedbackInput.value.trim();
+  if (feedback) {
+    console.log("User Feedback:", feedback);
+    thankYouPopup.style.display = "flex";
+    setTimeout(() => {
+      thankYouPopup.style.display = "none";
+      learnPage && (learnPage.style.display = "block");
+    }, 2500);
+    feedbackInput.value = "";
+    feedbackError.style.display = "none";
+    closeFeedback();
+    history.back();
+  } else {
+    feedbackError.style.display = "block";
+  }
+});
+
+function closeFeedback() {
+  feedbackModal.style.display = "none";
+  learnPage && (learnPage.style.display = "block");
+  feedbackError.style.display = "none";
+  feedbackInput.value = "";
+}
+
+// ==== BACK/FORWARD NAVIGATION ====
+window.addEventListener("popstate", (event) => {
+  if (event.state?.page === "feedback") {
+    feedbackModal.style.display = "flex";
+    feedbackError.style.display = "none";
+    learnPage && (learnPage.style.display = "none");
+  } else {
+    closeFeedback();
+  }
+});
+
 
 
 
@@ -662,53 +778,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-  // ==== FEEDBACK ====
-  feedbackBtn.addEventListener("delayed-click", () => {
-    learnPage && (learnPage.style.display = "none");
-    feedbackModal.style.display = "flex";
-    feedbackError.style.display = "none";
-  });
-
-  cancelFeedback.addEventListener("delayed-click", () => {
-    feedbackModal.style.display = "none";
-    learnPage && (learnPage.style.display = "block");
-    feedbackError.style.display = "none";
-    feedbackInput.value = "";
-  });
-
-  submitFeedback.addEventListener("delayed-click", () => {
-    const feedback = feedbackInput.value.trim();
-    if (feedback) {
-      console.log("User Feedback:", feedback);
-      thankYouPopup.style.display = "flex";
-      setTimeout(() => {
-        thankYouPopup.style.display = "none";
-        learnPage && (learnPage.style.display = "block");
-      }, 2500);
-      feedbackInput.value = "";
-      feedbackError.style.display = "none";
-      feedbackModal.style.display = "none";
-    } else {
-      feedbackError.style.display = "block";
-    }
-  });
-
-
 
 // ==== LESSON SECTION ====
 learnBtn.addEventListener('delayed-click', () => {
   renderLessonList();
   learnPage.classList.add('active');
   blurOverlay.classList.add('active');
+
+  // Push state so back button will know we are in "learn" mode
+  history.pushState({ page: "learn" }, "");
 });
 
-backToGameBtn.addEventListener('click', closeLearnPage);
-blurOverlay.addEventListener('click', closeLearnPage);
+backToGameBtn.addEventListener('click', () => {
+  closeLearnPage();
+  history.back(); // this will also work with browser back
+});
+
+blurOverlay.addEventListener('click', () => {
+  closeLearnPage();
+  history.back();
+});
 
 function closeLearnPage() {
   learnPage.classList.remove('active');
   blurOverlay.classList.remove('active');
 }
+
+// Listen for browser back/forward navigation
+window.addEventListener("popstate", (event) => {
+  if (!event.state || event.state.page !== "learn") {
+    // Back to game
+    closeLearnPage();
+  } else {
+    // If user navigates forward to "learn" again
+    learnPage.classList.add('active');
+    blurOverlay.classList.add('active');
+  }
+});
+
 
 function renderLessonList(filterLetter = 'all') {
   lessonsContainer.innerHTML = '';
@@ -957,3 +1064,4 @@ shareBtn?.addEventListener("delayed-click", async () => {
     console.error("Share failed:", err);
   }
 });
+
