@@ -629,8 +629,7 @@ window.addEventListener("popstate", (event) => {
 
 
 
-
-  // ==== REFRESH BUTTON ====
+// ==== REFRESH BUTTON ====
 refreshBtn.addEventListener("delayed-click", () => {
   // Push a state so back button can close this modal
   history.pushState({ page: "refreshConfirm" }, "");
@@ -638,7 +637,7 @@ refreshBtn.addEventListener("delayed-click", () => {
     "<h2>Refresh?</h2><p><strong>You will lose all merges</strong></p>",
     () => {
       initGame();
-      history.replaceState(null, ""); // clear modal state after refresh
+      history.replaceState(null, ""); // Clear modal state after refresh
     }
   );
 });
@@ -650,12 +649,46 @@ restartBtn.addEventListener("delayed-click", () => {
     "<h2>Restart?</h2><p><strong>The game will start again</strong></p>",
     () => {
       initGame();
-      history.replaceState(null, ""); // clear modal state after restart
+      history.replaceState(null, ""); // Clear modal state after restart
     }
   );
 });
 
-// Close confirmation modal helper
+// ==== SHOW CONFIRMATION MODAL ====
+function showConfirmation(messageHTML, onConfirm) {
+  const confirmModal = document.getElementById("confirmModal");
+  const confirmText = document.getElementById("confirmText");
+  const confirmYes = document.getElementById("confirmYes");
+  const confirmNo = document.getElementById("confirmNo");
+
+  // Insert message
+  confirmText.innerHTML = messageHTML;
+
+  // Show modal
+  confirmModal.style.display = "flex";
+
+  // Remove old listeners to avoid stacking
+  confirmYes.replaceWith(confirmYes.cloneNode(true));
+  confirmNo.replaceWith(confirmNo.cloneNode(true));
+
+  // Get fresh references after cloning
+  const newConfirmYes = document.getElementById("confirmYes");
+  const newConfirmNo = document.getElementById("confirmNo");
+
+  // Yes button click
+  newConfirmYes.addEventListener("delayed-click", () => {
+    closeConfirmation();
+    onConfirm();
+  });
+
+  // Cancel (icon) click
+  newConfirmNo.addEventListener("delayed-click", () => {
+    closeConfirmation();
+    history.replaceState(null, ""); // Clear modal state
+  });
+}
+
+// ==== CLOSE CONFIRMATION MODAL ====
 function closeConfirmation() {
   const confirmModal = document.getElementById("confirmModal");
   if (confirmModal) {
@@ -705,29 +738,41 @@ feedbackBtn.addEventListener("delayed-click", () => {
 
   // Push state for back button support
   history.pushState({ page: "feedback" }, "");
-});
 
-cancelFeedback.addEventListener("delayed-click", () => {
-  closeFeedback();
-  history.back();
-});
+  // Reset listeners to avoid stacking
+  const cancelBtn = document.getElementById("cancelFeedback");
+  const submitBtn = document.getElementById("submitFeedback");
 
-submitFeedback.addEventListener("delayed-click", () => {
-  const feedback = feedbackInput.value.trim();
-  if (feedback) {
-    console.log("User Feedback:", feedback);
-    thankYouPopup.style.display = "flex";
-    setTimeout(() => {
-      thankYouPopup.style.display = "none";
-      learnPage && (learnPage.style.display = "block");
-    }, 2500);
-    feedbackInput.value = "";
-    feedbackError.style.display = "none";
+  cancelBtn.replaceWith(cancelBtn.cloneNode(true));
+  submitBtn.replaceWith(submitBtn.cloneNode(true));
+
+  const newCancelBtn = document.getElementById("cancelFeedback");
+  const newSubmitBtn = document.getElementById("submitFeedback");
+
+  // Cancel click (icon in top-left)
+  newCancelBtn.addEventListener("delayed-click", () => {
     closeFeedback();
-    history.back();
-  } else {
-    feedbackError.style.display = "block";
-  }
+    history.replaceState(null, ""); // Clear modal state
+  });
+
+  // Submit click
+  newSubmitBtn.addEventListener("delayed-click", () => {
+    const feedback = feedbackInput.value.trim();
+    if (feedback) {
+      console.log("User Feedback:", feedback);
+      thankYouPopup.style.display = "flex";
+      setTimeout(() => {
+        thankYouPopup.style.display = "none";
+        learnPage && (learnPage.style.display = "block");
+      }, 2500);
+      feedbackInput.value = "";
+      feedbackError.style.display = "none";
+      closeFeedback();
+      history.replaceState(null, "");
+    } else {
+      feedbackError.style.display = "block";
+    }
+  });
 });
 
 function closeFeedback() {
@@ -747,7 +792,6 @@ window.addEventListener("popstate", (event) => {
     closeFeedback();
   }
 });
-
 
 
 
@@ -1064,4 +1108,3 @@ shareBtn?.addEventListener("delayed-click", async () => {
     console.error("Share failed:", err);
   }
 });
-
