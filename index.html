@@ -149,17 +149,22 @@
   </div>
 
 
-  <div id="feedbackModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle">
-    <div class="modal-content">
-      <h2 id="feedbackTitle">Give a Feedback!</h2>
-      <textarea id="feedbackInput" placeholder="What do you think about the game?"></textarea>
-      <p id="feedbackError" style="color: red; display: none; margin-top: 5px;">Please write something to submit</p>
-      <div class="modal-buttons">
-        <button id="cancelFeedback" class="btn no"><i class="far fa-times-circle"></i> Cancel</button>
-        <button id="submitFeedback" class="btn yes"><i class="far fa-paper-plane"></i> Submit</button>
-      </div>
+
+  <div id="feedbackModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle"> 
+  <div class="modal-content">
+    <button id="cancelFeedback" class="close-btn1" title="Cancel"><i class="far fa-times-circle"></i></button>
+    <h2 id="feedbackTitle">Give a Feedback!</h2>
+    <textarea id="feedbackInput" placeholder="What do you think about the game?"></textarea>
+    <p id="feedbackError" style="color: red; display: none; margin-top: 5px;">
+      Please write something to submit
+    </p>
+    <div class="modal-buttons">
+      <button id="submitFeedback" class="btn yes">
+        <i class="far fa-paper-plane"></i> Submit
+      </button>
     </div>
   </div>
+</div>
 
 
   <div id="thankYouPopup" class="thank-you-popup">
@@ -198,15 +203,17 @@
 
 
     <div id="moleculeLessons" class="lessons-container"></div>
+
+
     <div id="confirmModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmText">
-      <div class="modal-content">
-        <p id="confirmText">Are you sure?</p>
-        <div class="modal-buttons">
-          <button id="confirmNo" class="btn no"><i class="fas fa-times-circle"></i> Cancel</button>
-          <button id="confirmYes" class="btn yes"><i class="fas fa-check-circle"></i> Yes, do it</button>          
-        </div>
-      </div>
+  <div class="modal-content">
+  <button id="confirmNo" class="close-btn1" title="Cancel"><i class="far fa-times-circle"></i></button>
+    <p id="confirmText">Are you sure?</p>
+    <div class="modal-buttons">
+    <button id="confirmYes" class="btn yes"><i class="fas fa-check-circle"></i> Yes, do it</button>
     </div>
+  </div>
+</div>
 
 
       <!-- Hidden Gallery Section -->
